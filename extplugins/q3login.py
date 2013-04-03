@@ -37,7 +37,7 @@ import b3.plugin
 from b3.functions import hash_password
 
 __author__    = 'd0nin380'
-__version__ = '1.0'
+__version__ = '1.0.1'
 
 
 class Q3LoginPlugin(b3.plugin.Plugin):

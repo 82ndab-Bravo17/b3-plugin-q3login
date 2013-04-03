@@ -83,5 +83,8 @@ Support:
 	Support will ONLY be provided in http://forum.bigbrotherbot.net/releases/q3login-plugin/ so do not email me or anybody else your support questions.
 	
 # CHANGELOG
-#   29/03/2012 - 1.0 - d0nin380
-#	   * Initial Release
+# 1.0   - 26/03/2013 - d0nin380
+#        * Initial release - modification of login.py
+# 1.0.1 - 02/04/2013 - d0nin380
+#        * Fixed a bug where temporary client.groupBits were saved
+#           in the database by !q3setpassword

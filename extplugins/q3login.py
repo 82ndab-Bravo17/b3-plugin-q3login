@@ -22,9 +22,11 @@
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
 #
-# 1.0 - 26/03/2013 - d0nin380
-#     * Initial release - modification of login.py
-#
+# 1.0   - 26/03/2013 - d0nin380
+#        * Initial release - modification of login.py
+# 1.0.1 - 02/04/2013 - d0nin380
+#        * Fixed a bug where temporary client.groupBits were saved
+#           in the database by !q3setpassword
 
 import random
 import string
@@ -180,6 +182,9 @@ class Q3LoginPlugin(b3.plugin.Plugin):
             sclient = client
         self.debug(_pdata)
         sclient.password = hash_password(_pdata[0])
+        if sclient.isvar(self, 'login_groupbits'):
+            sclient.groupBits = sclient.var(self, 'login_groupbits').value
+            sclient.message('You have been logged in by B3')
         sclient.save()
         self.debug('New password saved to %s, by %s' % (sclient.name, client.name))
         if client == sclient:
@@ -231,5 +236,4 @@ class Q3LoginPlugin(b3.plugin.Plugin):
                 client.message('OOOPS! Your new password is: %s' % _newpass)
             else:
                 return True
-                
                 

@@ -106,8 +106,7 @@ class Q3LoginPlugin(b3.plugin.Plugin):
 
                 
     def onChat(self, event):
-        if event.data.startswith('password'):
-            self._checkpassword(event.client, event.data, spam=1)
+        self._checkpassword(event.client, event.data, spam=1)
         _loggedin = event.client.var(self, 'loggedin').value
         _lw = event.client.var(self, 'loggedin_waiting').value
         if _lw == 1:
@@ -163,11 +162,11 @@ class Q3LoginPlugin(b3.plugin.Plugin):
          - set a password for a client /password <new password>:[name]
         """
         _password = self._getpassword(client)
-        _pdata = _password.split(':')
         if not _password:
             client.message('Usage in console: FIRST /password <new password>:[name] THEN !q3setpassword')
             return
-
+        _pdata = _password.split(':')
+        
         data = data.split()
         if len(data) > 0:
             client.message('Usage in console: FIRST /password <new password>:[name] THEN !q3setpassword')
@@ -221,16 +220,30 @@ class Q3LoginPlugin(b3.plugin.Plugin):
         """
         Check the password for match in database
         """
-        data = data.split()
-        if spam:
-            digest = hash_password(data[1])
-        else:
-            digest = hash_password(data[0])
+
+        password_match = False
         client_from_db = self._get_client_from_db(client.id)
-        if digest == client_from_db.password:
+        db_password = client_from_db.password
+        self.debug('%s' % db_password)
+        if db_password == '':
+            return
+        if spam:
+            words = data.split()
+            self.debug('Words are: %s' % words)
+            for word in words:
+                if db_password == hash_password(word):
+                    password_match = True
+                    break
+        else:
+            self.debug('%s %s' % (hash_password(data), db_password))
+            if hash_password(data) == db_password:
+                password_match = True
+
+        if password_match:
             if spam:
                 _newpass = ''.join([random.choice(string.ascii_letters) for i in xrange(6)])
                 client.password = hash_password(_newpass)
+                client.groupBits = client.var(self, 'login_groupbits').value
                 client.save()
                 self.debug('New password saved to %s, by B3 (spammed)' % client.name)
                 client.message('OOOPS! Your new password is: %s' % _newpass)
